@@ -50,7 +50,9 @@
 
       function registerServiceWorker() {
         if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("ServiceWorker.js");
+          navigator.serviceWorker.register("ServiceWorker.js").catch((error) => {
+            console.warn("Service worker registration failed.", error);
+          });
         }
       }
 

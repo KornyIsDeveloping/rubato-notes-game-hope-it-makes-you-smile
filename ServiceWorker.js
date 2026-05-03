@@ -1,4 +1,4 @@
-const cacheName = "KorIsDeveloping-Rubato Notes-1.0-private-pwa";
+const cacheName = "KorIsDeveloping-Rubato Notes-1.0-private-pwa-v2";
 const appShell = [
   "./",
   "index.html",
@@ -7,17 +7,17 @@ const appShell = [
   "TemplateData/style.css",
   "TemplateData/icons/apple-touch-icon.png",
   "TemplateData/icons/icon-192.png",
-  "TemplateData/icons/icon-512.png",
-  "Build/WebGLPrivatePwaGitHubPages.loader.js",
-  "Build/WebGLPrivatePwaGitHubPages.framework.js.unityweb",
-  "Build/WebGLPrivatePwaGitHubPages.data.unityweb",
-  "Build/WebGLPrivatePwaGitHubPages.wasm.unityweb"
+  "TemplateData/icons/icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
-    const cache = await caches.open(cacheName);
-    await cache.addAll(appShell);
+    try {
+      const cache = await caches.open(cacheName);
+      await cache.addAll(appShell);
+    } catch (error) {
+      console.warn("Service worker pre-cache failed.", error);
+    }
     await self.skipWaiting();
   })());
 });
@@ -40,8 +40,12 @@ self.addEventListener("fetch", (event) => {
     if (event.request.mode === "navigate") {
       try {
         const networkResponse = await fetch(event.request);
-        const cache = await caches.open(cacheName);
-        cache.put("index.html", networkResponse.clone());
+        try {
+          const cache = await caches.open(cacheName);
+          await cache.put("index.html", networkResponse.clone());
+        } catch (error) {
+          console.warn("Navigation cache update failed.", error);
+        }
         return networkResponse;
       } catch (error) {
         const cachedNavigation = await caches.match("index.html");
@@ -57,8 +61,12 @@ self.addEventListener("fetch", (event) => {
     const networkResponse = await fetch(event.request);
     const requestUrl = new URL(event.request.url);
     if (networkResponse.ok && requestUrl.origin === self.location.origin) {
-      const cache = await caches.open(cacheName);
-      cache.put(event.request, networkResponse.clone());
+      try {
+        const cache = await caches.open(cacheName);
+        await cache.put(event.request, networkResponse.clone());
+      } catch (error) {
+        console.warn("Runtime cache write failed.", error);
+      }
     }
     return networkResponse;
   })());
