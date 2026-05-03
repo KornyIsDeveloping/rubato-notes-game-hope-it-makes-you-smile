@@ -14,6 +14,54 @@
     <link rel="icon" type="image/png" sizes="192x192" href="TemplateData/icons/icon-192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="TemplateData/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="TemplateData/style.css">
+    <style>
+      #unity-runtime-log {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 116px;
+        z-index: 30;
+        max-height: 34vh;
+        overflow: auto;
+        padding: 10px 12px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(16, 12, 18, 0.92);
+        color: #f5efe6;
+        font: 12px/1.45 Menlo, Monaco, Consolas, monospace;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(12px);
+      }
+
+      #unity-runtime-log[hidden] {
+        display: none;
+      }
+
+      #unity-runtime-log strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #ffb86b;
+      }
+
+      .unity-runtime-log-entry + .unity-runtime-log-entry {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .unity-runtime-log-entry-type {
+        color: #ff8d8d;
+        font-weight: 700;
+      }
+
+      .unity-runtime-log-entry-stack {
+        white-space: pre-wrap;
+        opacity: 0.78;
+      }
+    </style>
   </head>
   <body>
     <div id="unity-container">
@@ -26,6 +74,10 @@
         <p id="unity-loading-text">Preparing your performance...</p>
       </div>
       <div id="unity-warning"></div>
+      <section id="unity-runtime-log" hidden aria-live="polite">
+        <strong>Runtime Diagnostics</strong>
+        <div id="unity-runtime-log-entries"></div>
+      </section>
       <aside id="install-hint" hidden>
         <div class="install-hint-card">
           <div class="install-hint-copy">
@@ -38,6 +90,7 @@
     </div>
     <script>
       const installHintStorageKey = "rubato-install-hint-v1";
+      const assetVersion = "debug-" + Date.now().toString(36);
 
       function isAppleMobile() {
         return /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
@@ -48,11 +101,44 @@
         return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
       }
 
-      function registerServiceWorker() {
+      function withVersion(url) {
+        const separator = url.includes("?") ? "&" : "?";
+        return `${url}${separator}v=${encodeURIComponent(assetVersion)}`;
+      }
+
+      async function clearLegacyWebAppState() {
         if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("ServiceWorker.js").catch((error) => {
-            console.warn("Service worker registration failed.", error);
-          });
+          try {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            const currentScope = new URL("./", window.location.href).href;
+            await Promise.all(registrations
+              .filter((registration) => registration.scope.startsWith(currentScope))
+              .map((registration) => registration.unregister()));
+          } catch (error) {
+            console.warn("Service worker cleanup failed.", error);
+          }
+        }
+
+        if ("caches" in window) {
+          try {
+            const cacheKeys = await caches.keys();
+            await Promise.all(cacheKeys
+              .filter((key) =>
+                key.includes("private-pwa") ||
+                key.includes("Rubato Notes") ||
+                key.includes("KorIsDeveloping"))
+              .map((key) => caches.delete(key)));
+          } catch (error) {
+            console.warn("Cache cleanup failed.", error);
+          }
+        }
+
+        if ("indexedDB" in window) {
+          try {
+            indexedDB.deleteDatabase("UnityCache");
+          } catch (error) {
+            console.warn("IndexedDB cache cleanup failed.", error);
+          }
         }
       }
 
@@ -81,13 +167,15 @@
         installHint.hidden = false;
       }
 
-      registerServiceWorker();
+      clearLegacyWebAppState();
 
       const container = document.querySelector("#unity-container");
       const canvas = document.querySelector("#unity-canvas");
       const loadingBar = document.querySelector("#unity-loading-bar");
       const progressBarFull = document.querySelector("#unity-progress-bar-full");
       const warningBanner = document.querySelector("#unity-warning");
+      const runtimeLog = document.querySelector("#unity-runtime-log");
+      const runtimeLogEntries = document.querySelector("#unity-runtime-log-entries");
 
       function unityShowBanner(msg, type) {
         function updateBannerVisibility() {
@@ -116,13 +204,63 @@
         unityShowBanner(safeMessage, "error");
       };
 
+      function appendRuntimeEntry(type, message, stack = "") {
+        if (!runtimeLog || !runtimeLogEntries)
+          return;
+
+        runtimeLog.hidden = false;
+
+        const entry = document.createElement("div");
+        entry.className = "unity-runtime-log-entry";
+
+        const typeLine = document.createElement("div");
+        typeLine.className = "unity-runtime-log-entry-type";
+        typeLine.textContent = type;
+        entry.appendChild(typeLine);
+
+        const messageLine = document.createElement("div");
+        messageLine.textContent = message;
+        entry.appendChild(messageLine);
+
+        if (stack) {
+          const stackLine = document.createElement("pre");
+          stackLine.className = "unity-runtime-log-entry-stack";
+          stackLine.textContent = stack;
+          entry.appendChild(stackLine);
+        }
+
+        runtimeLogEntries.prepend(entry);
+        while (runtimeLogEntries.children.length > 6)
+          runtimeLogEntries.removeChild(runtimeLogEntries.lastChild);
+      }
+
+      window.__rubatoAppendUnityLog = (message, stack, type) => {
+        appendRuntimeEntry(type || "Unity", String(message || ""), String(stack || ""));
+      };
+
+      window.addEventListener("error", (event) => {
+        const error = event.error;
+        const message = error && error.message ? error.message : (event.message || "Unknown browser error");
+        const stack = error && error.stack ? error.stack : "";
+        appendRuntimeEntry("Browser Error", message, stack);
+      });
+
+      window.addEventListener("unhandledrejection", (event) => {
+        const reason = event.reason;
+        const message = typeof reason === "string"
+          ? reason
+          : (reason && reason.message) || "Unhandled promise rejection";
+        const stack = reason && reason.stack ? reason.stack : "";
+        appendRuntimeEntry("Promise Rejection", message, stack);
+      });
+
       const buildUrl = "Build";
-      const loaderUrl = buildUrl + "/WebGLPrivatePwaGitHubPages.loader.js";
+      const loaderUrl = withVersion(buildUrl + "/WebGLPrivatePwaGitHubPages.loader.js");
       const config = {
         arguments: [],
-        dataUrl: buildUrl + "/WebGLPrivatePwaGitHubPages.data.unityweb",
-        frameworkUrl: buildUrl + "/WebGLPrivatePwaGitHubPages.framework.js.unityweb",
-        codeUrl: buildUrl + "/WebGLPrivatePwaGitHubPages.wasm.unityweb",
+        dataUrl: withVersion(buildUrl + "/WebGLPrivatePwaGitHubPages.data.unityweb"),
+        frameworkUrl: withVersion(buildUrl + "/WebGLPrivatePwaGitHubPages.framework.js.unityweb"),
+        codeUrl: withVersion(buildUrl + "/WebGLPrivatePwaGitHubPages.wasm.unityweb"),
         streamingAssetsUrl: "StreamingAssets",
         companyName: "KorIsDeveloping",
         productName: "Rubato Notes",
