@@ -111,6 +111,11 @@
         updateBannerVisibility();
       }
 
+      window.__rubatoReportError = (message) => {
+        const safeMessage = String(message).replace(/\n/g, "<br>");
+        unityShowBanner(safeMessage, "error");
+      };
+
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/WebGLPrivatePwaGitHubPages.loader.js";
       const config = {
