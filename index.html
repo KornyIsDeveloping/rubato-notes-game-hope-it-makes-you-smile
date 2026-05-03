@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Rubato Notes</title>
+    <meta name="theme-color" content="#231F20">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rubato Notes">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="TemplateData/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="TemplateData/icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+      <div id="unity-loading-bar" aria-live="polite">
+        <div id="unity-logo" role="img" aria-label="Rubato Notes"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+        <p id="unity-loading-text">Preparing your performance...</p>
+      </div>
+      <div id="unity-warning"></div>
+      <aside id="install-hint" hidden>
+        <div class="install-hint-card">
+          <div class="install-hint-copy">
+            <strong>Install on iPhone</strong>
+            <span>Share -> Add to Home Screen -> Open as Web App</span>
+          </div>
+          <button id="install-hint-close" type="button" aria-label="Dismiss install tip">Later</button>
+        </div>
+      </aside>
+    </div>
+    <script>
+      const installHintStorageKey = "rubato-install-hint-v1";
+
+      function isAppleMobile() {
+        return /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+          (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      }
+
+      function isStandaloneMode() {
+        return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+      }
+
+      function registerServiceWorker() {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("ServiceWorker.js");
+        }
+      }
+
+      function setupInstallHint() {
+        const installHint = document.getElementById("install-hint");
+        const closeButton = document.getElementById("install-hint-close");
+        if (!installHint || !closeButton) return;
+
+        closeButton.addEventListener("click", () => {
+          installHint.hidden = true;
+          try {
+            localStorage.setItem(installHintStorageKey, "dismissed");
+          } catch (error) {
+          }
+        });
+
+        if (!isAppleMobile() || isStandaloneMode())
+          return;
+
+        try {
+          if (localStorage.getItem(installHintStorageKey) === "dismissed")
+            return;
+        } catch (error) {
+        }
+
+        installHint.hidden = false;
+      }
+
+      registerServiceWorker();
+
+      const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingBar = document.querySelector("#unity-loading-bar");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+      const warningBanner = document.querySelector("#unity-warning");
+
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? "block" : "none";
+        }
+
+        const div = document.createElement("div");
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type === "error") {
+          div.className = "unity-banner unity-banner-error";
+        } else {
+          div.className = type === "warning" ? "unity-banner unity-banner-warning" : "unity-banner";
+          setTimeout(function() {
+            if (warningBanner.contains(div)) {
+              warningBanner.removeChild(div);
+              updateBannerVisibility();
+            }
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/WebGLPrivatePwaGitHubPages.loader.js";
+      const config = {
+        arguments: [],
+        dataUrl: buildUrl + "/WebGLPrivatePwaGitHubPages.data.unityweb",
+        frameworkUrl: buildUrl + "/WebGLPrivatePwaGitHubPages.framework.js.unityweb",
+        codeUrl: buildUrl + "/WebGLPrivatePwaGitHubPages.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "KorIsDeveloping",
+        productName: "Rubato Notes",
+        productVersion: "1.0",
+        showBanner: unityShowBanner,
+      };
+
+      document.body.style.touchAction = "none";
+      canvas.style.touchAction = "none";
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        const meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content = "width=device-width, height=device-height, initial-scale=1.0, viewport-fit=cover, user-scalable=no, shrink-to-fit=yes";
+        document.getElementsByTagName("head")[0].appendChild(meta);
+      }
+
+
+      loadingBar.style.display = "grid";
+
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = (100 * progress) + "%";
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+          setupInstallHint();
+        }).catch((message) => {
+          unityShowBanner(message, "error");
+        });
+      };
+      script.onerror = () => {
+        unityShowBanner("The game files could not be loaded. Please refresh and try again.", "error");
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>

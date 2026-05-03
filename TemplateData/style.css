@@ -1,0 +1,192 @@
+:root {
+  color-scheme: dark;
+  --surface: rgba(17, 14, 18, 0.88);
+  --surface-strong: rgba(17, 14, 18, 0.96);
+  --border: rgba(255, 232, 204, 0.18);
+  --text: #fff7ed;
+  --muted: rgba(255, 247, 237, 0.78);
+  --accent: #f5c56f;
+  --accent-strong: #ffdf9e;
+  --warning: #f5d56f;
+  --error: #ff9f9f;
+  --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #231F20;
+  color: var(--text);
+}
+
+#unity-container {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(255, 223, 158, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(13, 11, 14, 0.96), rgba(26, 21, 28, 0.96));
+}
+
+#unity-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #231F20;
+  outline: none;
+}
+
+#unity-loading-bar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  gap: 14px;
+  justify-items: center;
+  width: min(280px, calc(100vw - 48px));
+  padding: 24px 22px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+#unity-logo {
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  background: url("icons/icon-192.png") center / cover no-repeat;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+}
+
+#unity-progress-bar-empty {
+  width: 100%;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#unity-progress-bar-full {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+}
+
+#unity-loading-text {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+
+#unity-warning {
+  position: absolute;
+  left: 50%;
+  top: max(16px, env(safe-area-inset-top));
+  transform: translateX(-50%);
+  display: none;
+  width: min(680px, calc(100vw - 32px));
+  z-index: 30;
+}
+
+.unity-banner {
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(21, 19, 24, 0.92);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.unity-banner-warning {
+  border-color: rgba(245, 213, 111, 0.35);
+  color: #fff5ca;
+}
+
+.unity-banner-error {
+  border-color: rgba(255, 159, 159, 0.35);
+  color: #ffe2e2;
+}
+
+#install-hint {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 20;
+}
+
+.install-hint-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.install-hint-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.install-hint-copy strong {
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.install-hint-copy span {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+#install-hint-close {
+  margin-left: auto;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font: inherit;
+}
+
+#unity-footer {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+
+@media (max-width: 640px) {
+  #unity-loading-bar {
+    padding: 20px 18px;
+    border-radius: 20px;
+  }
+
+  .install-hint-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #install-hint-close {
+    margin-left: 0;
+    align-self: stretch;
+  }
+}
