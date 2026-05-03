@@ -234,6 +234,13 @@
           runtimeLogEntries.removeChild(runtimeLogEntries.lastChild);
       }
 
+      function shouldIgnoreBrowserError(message, stack) {
+        const normalizedMessage = String(message || "").trim();
+        const normalizedStack = String(stack || "").trim();
+        return (normalizedMessage === "Script error." || normalizedMessage === "Script error") &&
+          normalizedStack.length === 0;
+      }
+
       window.__rubatoAppendUnityLog = (message, stack, type) => {
         appendRuntimeEntry(type || "Unity", String(message || ""), String(stack || ""));
       };
@@ -250,14 +257,20 @@
             parts.push(`resource: ${resource}`);
         }
         const stack = error && error.stack ? error.stack : parts.join("\n");
+        if (shouldIgnoreBrowserError(message, stack))
+          return;
         appendRuntimeEntry("Browser Error", message, stack);
       });
 
       window.addEventListener("unhandledrejection", (event) => {
         const reason = event.reason;
+        if (reason == null)
+          return;
         const message = typeof reason === "string"
           ? reason
           : (reason && reason.message) || "Unhandled promise rejection";
+        if (message === "null")
+          return;
         const stack = reason && reason.stack ? reason.stack : "";
         appendRuntimeEntry("Promise Rejection", message, stack);
       });
