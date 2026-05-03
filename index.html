@@ -241,7 +241,15 @@
       window.addEventListener("error", (event) => {
         const error = event.error;
         const message = error && error.message ? error.message : (event.message || "Unknown browser error");
-        const stack = error && error.stack ? error.stack : "";
+        const parts = [];
+        if (event.filename)
+          parts.push(`${event.filename}:${event.lineno || 0}:${event.colno || 0}`);
+        if (event.target && event.target !== window) {
+          const resource = event.target.src || event.target.href || event.target.currentSrc || event.target.tagName;
+          if (resource)
+            parts.push(`resource: ${resource}`);
+        }
+        const stack = error && error.stack ? error.stack : parts.join("\n");
         appendRuntimeEntry("Browser Error", message, stack);
       });
 
