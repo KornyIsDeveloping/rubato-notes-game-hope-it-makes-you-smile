@@ -44,6 +44,21 @@ body {
   height: 100%;
   overflow: hidden;
   background: var(--shell-bg) url("shell-background.png") center center / 100% 100% no-repeat;
+  z-index: 0;
+}
+
+#unity-container::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(150px, calc(var(--rubato-safe-bottom, 0px) + 96px));
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 0% 100%, rgba(18, 39, 94, 0.72) 0 38%, transparent 39%),
+    radial-gradient(circle at 85% 100%, rgba(18, 39, 94, 0.64) 0 42%, transparent 43%);
 }
 
 #unity-canvas {
@@ -53,8 +68,9 @@ body {
   width: calc(100% + 2px);
   height: calc(100% + 2px);
   display: block;
-  background: #231F20;
+  background: {{{ BACKGROUND_COLOR }}};
   outline: none;
+  z-index: 1;
 }
 
 #unity-loading-bar {
