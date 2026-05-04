@@ -10,6 +10,7 @@
   --warning: #f5d56f;
   --error: #ff9f9f;
   --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+  --shell-bg: #071846;
   font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -23,7 +24,7 @@ html, body {
 body {
   margin: 0;
   overflow: hidden;
-  background: #231F20;
+  background: var(--shell-bg);
   color: var(--text);
   overscroll-behavior: none;
 }
