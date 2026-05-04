@@ -107,6 +107,16 @@
         return `${url}${separator}v=${encodeURIComponent(assetVersion)}`;
       }
 
+      function syncViewportBounds() {
+        const measuredHeight = Math.max(
+          window.innerHeight || 0,
+          document.documentElement ? (document.documentElement.clientHeight || 0) : 0,
+        );
+        const height = measuredHeight > 0 ? measuredHeight : screen.height || 0;
+        if (height > 0)
+          document.documentElement.style.setProperty("--rubato-app-height", `${height}px`);
+      }
+
       async function clearLegacyWebAppState() {
         if ("serviceWorker" in navigator) {
           try {
@@ -169,6 +179,12 @@
       }
 
       clearLegacyWebAppState();
+      syncViewportBounds();
+
+      window.addEventListener("resize", syncViewportBounds);
+      window.addEventListener("orientationchange", syncViewportBounds);
+      if (window.visualViewport)
+        window.visualViewport.addEventListener("resize", syncViewportBounds);
 
       const container = document.querySelector("#unity-container");
       const canvas = document.querySelector("#unity-canvas");
