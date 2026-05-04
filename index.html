@@ -126,6 +126,25 @@
         return parseFloat(window.getComputedStyle(probe).paddingBottom) || 0;
       }
 
+      function getStandaloneBottomGap(measuredHeight) {
+        if (!isAppleMobile() || !isStandaloneMode())
+          return 0;
+
+        const cssSafeAreaBottom = getCssSafeAreaBottom();
+        if (cssSafeAreaBottom > 0)
+          return cssSafeAreaBottom;
+
+        const screenHeight = Number(window.screen && window.screen.height) || 0;
+        if (screenHeight <= 0 || measuredHeight <= 0)
+          return 0;
+
+        const inferredGap = screenHeight - measuredHeight;
+        if (inferredGap <= 0 || inferredGap > 120)
+          return 0;
+
+        return inferredGap;
+      }
+
       function syncViewportBounds() {
         const measuredHeight = Math.max(
           window.innerHeight || 0,
@@ -137,7 +156,7 @@
 
         document.documentElement.style.setProperty(
           "--rubato-safe-bottom",
-          `${getCssSafeAreaBottom()}px`,
+          `${getStandaloneBottomGap(height)}px`,
         );
       }
 
