@@ -82,7 +82,7 @@ body::after {
   width: calc(100% + 2px);
   height: calc(100% + 2px);
   display: block;
-  background: {{{ BACKGROUND_COLOR }}};
+  background: #231F20;
   outline: none;
 }
 
