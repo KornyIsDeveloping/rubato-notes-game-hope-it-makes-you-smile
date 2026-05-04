@@ -24,7 +24,7 @@ html, body {
 body {
   margin: 0;
   overflow: hidden;
-  background: var(--shell-bg);
+  background: var(--shell-bg) url("shell-background.png") center center / 100% 100% no-repeat;
   color: var(--text);
   overscroll-behavior: none;
 }
@@ -36,9 +36,7 @@ body {
   height: 100vh;
   height: 100dvh;
   min-height: -webkit-fill-available;
-  background:
-    radial-gradient(circle at top, rgba(255, 223, 158, 0.18), transparent 34%),
-    linear-gradient(180deg, rgba(13, 11, 14, 0.96), rgba(26, 21, 28, 0.96));
+  background: transparent;
 }
 
 #unity-canvas {
