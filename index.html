@@ -107,14 +107,37 @@
         return `${url}${separator}v=${encodeURIComponent(assetVersion)}`;
       }
 
+      function getCssSafeAreaInsets() {
+        let probe = document.getElementById("rubato-safe-area-css-probe");
+        if (!probe) {
+          probe = document.createElement("div");
+          probe.id = "rubato-safe-area-css-probe";
+          probe.style.position = "fixed";
+          probe.style.top = "0";
+          probe.style.left = "0";
+          probe.style.width = "0";
+          probe.style.height = "0";
+          probe.style.visibility = "hidden";
+          probe.style.pointerEvents = "none";
+          probe.style.paddingTop = "env(safe-area-inset-top)";
+          probe.style.paddingBottom = "env(safe-area-inset-bottom)";
+          probe.style.paddingLeft = "env(safe-area-inset-left)";
+          probe.style.paddingRight = "env(safe-area-inset-right)";
+          document.documentElement.appendChild(probe);
+        }
+
+        const styles = window.getComputedStyle(probe);
+        return {
+          top: parseFloat(styles.paddingTop) || 0,
+          bottom: parseFloat(styles.paddingBottom) || 0,
+          left: parseFloat(styles.paddingLeft) || 0,
+          right: parseFloat(styles.paddingRight) || 0,
+        };
+      }
+
       function syncViewportBounds() {
-        const measuredHeight = Math.max(
-          window.innerHeight || 0,
-          document.documentElement ? (document.documentElement.clientHeight || 0) : 0,
-        );
-        const height = measuredHeight > 0 ? measuredHeight : screen.height || 0;
-        if (height > 0)
-          document.documentElement.style.setProperty("--rubato-app-height", `${height}px`);
+        const insets = getCssSafeAreaInsets();
+        document.documentElement.style.setProperty("--rubato-safe-bottom", `${insets.bottom}px`);
       }
 
       async function clearLegacyWebAppState() {
