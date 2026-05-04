@@ -16,8 +16,8 @@
 
 html, body {
   width: 100%;
-  height: 100%;
-  min-height: 100%;
+  height: var(--rubato-app-height, 100vh);
+  min-height: var(--rubato-app-height, 100vh);
 }
 
 html {
@@ -35,11 +35,10 @@ body {
 }
 
 #unity-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: calc(-1 * var(--rubato-safe-bottom, 0px));
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: var(--shell-bg) url("shell-background.png") center top / calc(100% + 4px) calc(100% + env(safe-area-inset-bottom) + 4px) no-repeat;
 }
@@ -48,10 +47,8 @@ body {
   position: absolute;
   top: -1px;
   left: -1px;
-  right: -1px;
-  bottom: -1px;
-  width: auto;
-  height: auto;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
   display: block;
   background: #231F20;
   outline: none;
