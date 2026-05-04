@@ -39,6 +39,20 @@ body {
   overscroll-behavior: none;
 }
 
+body::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--rubato-app-height, 100vh);
+  height: var(--rubato-safe-bottom, 0px);
+  pointer-events: none;
+  background:
+    var(--shell-bg) url("shell-background.png")
+    center bottom / 100% var(--rubato-app-height, 100vh)
+    no-repeat;
+}
+
 #unity-container {
   position: absolute;
   top: 0;
