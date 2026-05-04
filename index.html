@@ -245,6 +245,11 @@
         unityShowBanner(safeMessage, "error");
       };
 
+      window.__rubatoShowBanner = (message, type = "warning") => {
+        const safeMessage = String(message).replace(/\n/g, "<br>");
+        unityShowBanner(safeMessage, type);
+      };
+
       function appendRuntimeEntry(type, message, stack = "") {
         if (!runtimeLog || !runtimeLogEntries)
           return;
