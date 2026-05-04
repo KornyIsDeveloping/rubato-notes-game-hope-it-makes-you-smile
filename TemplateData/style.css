@@ -1,7 +1,7 @@
 :root {
   color-scheme: dark;
-  --surface: rgba(17, 14, 18, 0.88);
-  --surface-strong: rgba(17, 14, 18, 0.96);
+  --surface: rgba(9, 19, 52, 0.9);
+  --surface-strong: rgba(9, 19, 52, 0.97);
   --border: rgba(255, 232, 204, 0.18);
   --text: #fff7ed;
   --muted: rgba(255, 247, 237, 0.78);
@@ -46,7 +46,7 @@ body::before {
   pointer-events: none;
   background:
     radial-gradient(circle at 50% 18%, rgba(38, 63, 128, 0.34), rgba(38, 63, 128, 0) 28%),
-    linear-gradient(180deg, rgba(8, 15, 38, 0.86), rgba(14, 10, 17, 0.9)),
+    linear-gradient(180deg, rgba(7, 24, 70, 0.98), rgba(9, 28, 82, 0.98)),
     var(--shell-bg) url("shell-background.png") center top / 100% var(--rubato-app-height, 100vh) no-repeat;
 }
 
