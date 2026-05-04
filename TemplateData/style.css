@@ -16,8 +16,8 @@
 
 html, body {
   width: 100%;
-  height: calc(var(--rubato-app-height, 100vh) + var(--rubato-safe-bottom, 0px));
-  min-height: calc(var(--rubato-app-height, 100vh) + var(--rubato-safe-bottom, 0px));
+  height: var(--rubato-app-height, 100vh);
+  min-height: var(--rubato-app-height, 100vh);
 }
 
 html {
@@ -27,9 +27,7 @@ html {
 body {
   margin: 0;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 18%, rgba(38, 63, 128, 0.34), rgba(38, 63, 128, 0) 28%),
