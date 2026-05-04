@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Rubato Notes">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, viewport-fit=cover, user-scalable=no, shrink-to-fit=yes">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, viewport-fit=cover, user-scalable=no, shrink-to-fit=no">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="TemplateData/icons/icon-192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="TemplateData/icons/apple-touch-icon.png">
@@ -178,14 +178,6 @@
       const runtimeLog = document.querySelector("#unity-runtime-log");
       const runtimeLogEntries = document.querySelector("#unity-runtime-log-entries");
 
-      function syncViewportSize() {
-        const viewport = window.visualViewport;
-        const width = Math.round(viewport ? viewport.width : window.innerWidth);
-        const height = Math.round(viewport ? viewport.height : window.innerHeight);
-        document.documentElement.style.setProperty("--app-width", `${width}px`);
-        document.documentElement.style.setProperty("--app-height", `${height}px`);
-      }
-
       function unityShowBanner(msg, type) {
         function updateBannerVisibility() {
           warningBanner.style.display = warningBanner.children.length ? "block" : "none";
@@ -297,12 +289,6 @@
         productVersion: "1.0",
         showBanner: unityShowBanner,
       };
-
-      syncViewportSize();
-      window.addEventListener("resize", syncViewportSize);
-      window.addEventListener("orientationchange", syncViewportSize);
-      if (window.visualViewport)
-        window.visualViewport.addEventListener("resize", syncViewportSize);
 
       document.body.style.touchAction = "none";
       canvas.style.touchAction = "none";
