@@ -48,7 +48,7 @@ body {
   top: -1px;
   left: -1px;
   width: calc(100% + 2px);
-  height: calc(100% + 2px);
+  height: calc(100% + var(--rubato-safe-bottom, 0px) + 2px);
   display: block;
   background: #231F20;
   outline: none;
