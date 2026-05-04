@@ -31,12 +31,23 @@ body {
   left: 0;
   right: 0;
   overflow: hidden;
+  background: var(--shell-bg);
+  color: var(--text);
+  overscroll-behavior: none;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--rubato-app-height, 100vh);
+  pointer-events: none;
   background:
     radial-gradient(circle at 50% 18%, rgba(38, 63, 128, 0.34), rgba(38, 63, 128, 0) 28%),
     linear-gradient(180deg, rgba(8, 15, 38, 0.86), rgba(14, 10, 17, 0.9)),
-    var(--shell-bg) url("shell-background.png") center center / 100% 100% no-repeat;
-  color: var(--text);
-  overscroll-behavior: none;
+    var(--shell-bg) url("shell-background.png") center top / 100% var(--rubato-app-height, 100vh) no-repeat;
 }
 
 body::after {
