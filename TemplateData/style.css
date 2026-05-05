@@ -10,7 +10,7 @@
   --warning: #f5d56f;
   --error: #ff9f9f;
   --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
-  --shell-bg: #061338;
+  --shell-bg: #04102d;
   font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -48,7 +48,7 @@ body::before {
     radial-gradient(circle at 16% 24%, rgba(233, 242, 255, 0.08), rgba(233, 242, 255, 0) 22%),
     radial-gradient(circle at 82% 18%, rgba(233, 242, 255, 0.06), rgba(233, 242, 255, 0) 24%),
     radial-gradient(circle at 22% 82%, rgba(233, 242, 255, 0.05), rgba(233, 242, 255, 0) 20%),
-    linear-gradient(180deg, rgba(6, 19, 56, 0.98), rgba(8, 24, 70, 0.98)),
+    linear-gradient(180deg, rgba(4, 16, 45, 0.985), rgba(6, 20, 58, 0.985)),
     var(--shell-bg) url("shell-background.png") center top / 100% var(--rubato-app-height, 100vh) no-repeat;
 }
 
