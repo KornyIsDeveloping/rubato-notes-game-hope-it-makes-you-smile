@@ -1,8 +1,8 @@
 :root {
   color-scheme: dark;
-  --surface: rgba(9, 19, 52, 0.9);
-  --surface-strong: rgba(9, 19, 52, 0.97);
-  --border: rgba(255, 232, 204, 0.18);
+  --surface: rgba(8, 16, 44, 0.9);
+  --surface-strong: rgba(7, 14, 38, 0.97);
+  --border: rgba(245, 197, 111, 0.62);
   --text: #fff7ed;
   --muted: rgba(255, 247, 237, 0.78);
   --accent: #f5c56f;
@@ -10,7 +10,7 @@
   --warning: #f5d56f;
   --error: #ff9f9f;
   --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
-  --shell-bg: #071846;
+  --shell-bg: #061338;
   font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -45,8 +45,10 @@ body::before {
   height: var(--rubato-app-height, 100vh);
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 18%, rgba(38, 63, 128, 0.34), rgba(38, 63, 128, 0) 28%),
-    linear-gradient(180deg, rgba(7, 24, 70, 0.98), rgba(9, 28, 82, 0.98)),
+    radial-gradient(circle at 16% 24%, rgba(233, 242, 255, 0.08), rgba(233, 242, 255, 0) 22%),
+    radial-gradient(circle at 82% 18%, rgba(233, 242, 255, 0.06), rgba(233, 242, 255, 0) 24%),
+    radial-gradient(circle at 22% 82%, rgba(233, 242, 255, 0.05), rgba(233, 242, 255, 0) 20%),
+    linear-gradient(180deg, rgba(6, 19, 56, 0.98), rgba(8, 24, 70, 0.98)),
     var(--shell-bg) url("shell-background.png") center top / 100% var(--rubato-app-height, 100vh) no-repeat;
 }
 
@@ -82,7 +84,7 @@ body::after {
   width: calc(100% + 2px);
   height: calc(100% + 2px);
   display: block;
-  background: #231F20;
+  background: transparent;
   outline: none;
 }
 
